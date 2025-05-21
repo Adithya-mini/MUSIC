@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from deepface import DeepFace
@@ -6,11 +7,12 @@ import base64
 import numpy as np
 import random
 import sqlite3
+from pathlib import Path
 
 app = Flask(__name__)
 CORS(app)
 
-DATABASE = 'songs.db'
+DATABASE = os.path.join(os.path.dirname(__file__), 'songs.db')
 
 def get_songs_from_db(emotion):
     conn = sqlite3.connect(DATABASE)
@@ -63,4 +65,6 @@ def detect_emotion():
         return jsonify({"error": "Face not detected or an error occurred."}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
